@@ -9,11 +9,12 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 COPY app ./app
-COPY start.py ./start.py
+COPY backend.py ./backend.py
+
 
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
 EXPOSE 8000
 
-CMD ["python", "start.py"]
+CMD ["python", "backend.py"]
