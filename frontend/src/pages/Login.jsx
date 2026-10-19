@@ -42,7 +42,7 @@ useEffect(() => {
   async function wakeBackend() {
     try {
       const response = await fetch(
-        "https://supportflow-ryqi.onrender.com/docs",
+        "https://supportflow-ryqi.onrender.com/health",
         {
           method: "GET",
           cache: "no-store",
