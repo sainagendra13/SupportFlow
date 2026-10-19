@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Headphones, LockKeyhole } from "lucide-react";
-
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -32,7 +32,56 @@ export default function Login() {
       setLoading(false);
     }
   }
+  
+const [backendReady, setBackendReady] = useState(false);
 
+useEffect(() => {
+  let cancelled = false;
+  let retryTimer;
+
+  async function wakeBackend() {
+    try {
+      const response = await fetch(
+        "https://supportflow-ryqi.onrender.com/docs",
+        {
+          method: "GET",
+          cache: "no-store",
+          credentials: "omit",
+        }
+      );
+
+      if (response.ok) {
+        if (!cancelled) setBackendReady(true);
+        return;
+      }
+    } catch (error) {
+      console.log("Backend is starting...", error);
+    }
+
+    if (!cancelled) {
+      retryTimer = setTimeout(wakeBackend, 5000);
+    }
+  }
+
+  wakeBackend();
+
+  return () => {
+    cancelled = true;
+    clearTimeout(retryTimer);
+  };
+}, []);
+
+if (!backendReady) {
+  return (
+    <div className="loading-message">
+      <h2>Starting SupportFlow...</h2>
+      <p>
+        Our free-tier server is waking up.
+        The login form will appear when it is ready.
+      </p>
+    </div>
+  );
+}
   return (
     <div className="auth-page">
       <div className="auth-box">
